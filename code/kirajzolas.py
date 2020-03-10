@@ -50,5 +50,5 @@ def drawSearchLine(x,y,dir):
     for i in range(len(SearchLineAngles)):
         pygame.draw.line(Display,blue,(x,y),
                  (x+math.sin(dir+SearchLineAngles[i])*500,y+math.cos(dir+SearchLineAngles[i])*500))
-        pygame.draw.circle(Display,blue,(int(x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i]),
+        pygame.draw.circle(Display,white,(int(x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i]),
                                          int(y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i])),4)
