@@ -26,5 +26,4 @@ def move(x,y,dir,forward,dirChange):
             dir=dir+forward/rad
             x=origo[0]-math.cos(dir)*rad
             y=origo[1]+math.sin(dir)*rad
-        print (slip)
     return (x,y,dir)

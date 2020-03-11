@@ -1,5 +1,6 @@
 import pygame
 import math
+import os
 
 #constants
 
@@ -14,6 +15,11 @@ red = (255,0,0)
 green = (0,255,0)
 blue = (0,0,255)
 
+# variables
+tracks = [[] for i in range(2)]
+palya_1b=[]
+palya_1k=[]
+'''
 palya_1b=[]
 palya_1b.append((200,200))
 palya_1b.append((200,400))
@@ -25,7 +31,7 @@ palya_1k.append((100,100))
 palya_1k.append((100,500))
 palya_1k.append((700,500))
 palya_1k.append((700,100))
-
+'''
 pygame.init()
 Display = pygame.display.set_mode((900,900))
 Display.fill(black)
@@ -48,7 +54,26 @@ def drawPalya(x,y,Dir):
 
 def drawSearchLine(x,y,dir):
     for i in range(len(SearchLineAngles)):
-        pygame.draw.line(Display,blue,(x,y),
-                 (x+math.sin(dir+SearchLineAngles[i])*500,y+math.cos(dir+SearchLineAngles[i])*500))
+        '''pygame.draw.line(Display,blue,(x,y),
+                 (x+math.sin(dir+SearchLineAngles[i])*500,y+math.cos(dir+SearchLineAngles[i])*500))'''
         pygame.draw.circle(Display,white,(int(x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i]),
                                          int(y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i])),4)
+def getTracks():
+    tracks=[[] for i in range(2)]
+    tracks[0]=[]
+    tracks[1]=[]
+    filenames = os.listdir(os.getcwd()+"\\pontok")
+    for name in filenames:
+        bool1=False
+        f=open(os.getcwd()+"\\pontok\\"+name,"r")
+        for line in f:
+            if bool1:
+                strings=line.split(",")
+                tracks[1].append([int(strings[0]), int(strings[1])])
+            elif line == "---\n":
+                bool1=True
+            else:
+                strings = line.split(",")
+                tracks[0].append([int(strings[0]), int(strings[1])])
+        f.close()
+    return tracks[0], tracks[1]
