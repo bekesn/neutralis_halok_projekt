@@ -1,25 +1,28 @@
-import pygame
-import sys
 from datetime import datetime
+import pygame
+import math
 
 pygame.init()
 Display = pygame.display.set_mode((900,900))
 Display.fill((0,0,0))
 
-bool1=False
+outerReady=False
+innerReady=False
+startReady=False
+ready= False
 list1=[]
 list2=[]
 pygame.display.set_caption("Külsö iv","b")
-
-while True:
+go = True
+while go:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            sys.exit()
+            go = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             Display.fill((0, 0, 0))
             buttons = pygame.mouse.get_pressed()
-            if not bool1:
+            if not outerReady:
                 if buttons[2]:
                     if len(list1)>0:
                         list1.pop(len(list1)-1)
@@ -28,20 +31,49 @@ while True:
                     list1.append([x, y])
                     print(x,y)
                 elif buttons[1]:
-                    bool1=True
-                    pygame.display.set_caption("Belsö iv", "b")
-            else:
+                    outerReady=True
+                    pygame.display.set_caption("Belsö iv")
+            elif not innerReady:
                 if buttons[2]:
                     if len(list2)==0:
-                        pygame.display.set_caption("Külsö iv", "b")
-                        bool1=False
+                        pygame.display.set_caption("Külsö iv")
+                        outerReady=False
                     else:
-                        list2.pop(len(list1) - 1)
+                        list2.pop(len(list2) - 1)
                 elif buttons[0]:
                     (x, y)=pygame.mouse.get_pos()
                     list2.append([x, y])
                     print(x,y)
                 elif buttons[1]:
+                    pygame.display.set_caption("Start")
+                    innerReady = True
+            elif not startReady:
+                if buttons[2]:
+                    pygame.display.set_caption("Külsö iv")
+                    innerReady = False
+                elif buttons[0]:
+                    start = pygame.mouse.get_pos()
+                    startReady = True
+                    pygame.display.set_caption("Kezdo irany")
+            else:
+                if buttons[2]:
+                    if ready:
+                        ready = False
+                        pygame.display.set_caption("Kezdo irany")
+                    else:
+                        pygame.display.set_caption("Start")
+                        startReady = False
+                elif buttons[0] and not ready:
+                    pos = pygame.mouse.get_pos()
+                    pos = [pos[0]-start[0], pos[1]-start[1]]
+                    #l=math.sqrt(float(startDir[0]*startDir[0]+startDir[1]*startDir[1]))
+                    #startDir=(startDir[0]/l, startDir[1]/l)
+                    startDir=math.atan(float(pos[0])/float(pos[1]))
+                    if pos[0] < 0:
+                        startDir = startDir+math.pi
+                    ready = True
+                    pygame.display.set_caption("Mentesre kesz")
+                elif buttons[1] and ready:
                     now = datetime.now()
                     f=open("pontok/pontok_"+now.strftime("%m%d_%H%M%S")+".txt","x")
                     for i in list1:
@@ -49,9 +81,17 @@ while True:
                     f.write("---\n")
                     for i in list2:
                         f.write(str(i[0]) + "," + str(i[1]) + ",\n")
+                    f.write("---\n")
+                    f.write(str(start[0])+","+str(start[1])+",\n")
+                    f.write("---\n")
+                    f.write(str(startDir) + ",\n")
                     f.close()
                     pygame.quit()
-                    sys.exit()
+                    go=False
             if len(list1) > 1:  pygame.draw.polygon(Display, (255, 0, 0), list1, 3)
             if len(list2) > 1:  pygame.draw.polygon(Display, (255, 0, 0), list2, 3)
+            if ready: pygame.draw.line(Display, (0, 128, 255), start,
+                                       (start[0]+20*math.sin(startDir), start[1]+20*math.cos(startDir)), 3)
+            if startReady: pygame.draw.circle(Display, (0, 0, 255), start, 3)
+
             pygame.display.update()

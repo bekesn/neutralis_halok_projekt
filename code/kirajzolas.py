@@ -1,6 +1,6 @@
-import pygame
 import math
 import os
+import pygame
 
 #constants
 
@@ -19,19 +19,7 @@ blue = (0,0,255)
 tracks = [[] for i in range(2)]
 palya_1b=[]
 palya_1k=[]
-'''
-palya_1b=[]
-palya_1b.append((200,200))
-palya_1b.append((200,400))
-palya_1b.append((400,400))
-palya_1b.append((400,200))
 
-palya_1k=[]
-palya_1k.append((100,100))
-palya_1k.append((100,500))
-palya_1k.append((700,500))
-palya_1k.append((700,100))
-'''
 pygame.init()
 Display = pygame.display.set_mode((900,900))
 Display.fill(black)
@@ -54,26 +42,52 @@ def drawPalya(x,y,Dir):
 
 def drawSearchLine(x,y,dir):
     for i in range(len(SearchLineAngles)):
-        '''pygame.draw.line(Display,blue,(x,y),
-                 (x+math.sin(dir+SearchLineAngles[i])*500,y+math.cos(dir+SearchLineAngles[i])*500))'''
-        pygame.draw.circle(Display,white,(int(x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i]),
-                                         int(y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i])),4)
-def getTracks():
-    tracks=[[] for i in range(2)]
-    tracks[0]=[]
-    tracks[1]=[]
-    filenames = os.listdir(os.getcwd()+"\\pontok")
-    for name in filenames:
-        bool1=False
-        f=open(os.getcwd()+"\\pontok\\"+name,"r")
+        pygame.draw.line(Display,blue,(x,y),
+                 (x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i],
+                  y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i]))
+        '''pygame.draw.circle(Display,white,(int(x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i]),
+                                         int(y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i])),4)'''
+
+class Track():
+    def __init__(self):
+        self.inner=[]
+        self.outer=[]
+        self.startPos = [100,100]
+        self.startDir = 0.5
+
+def getTracks(x = 0):
+    filenames = os.listdir(os.getcwd() + "\\pontok")
+    tracks=[]
+    for file in filenames:
+        tracks.append(Track())
+
+    for i in range(len(filenames)):
+        outerReady=False
+        innerReady = False
+        startReady = False
+        f=open(os.getcwd()+"\\pontok\\"+filenames[i],"r")
         for line in f:
-            if bool1:
-                strings=line.split(",")
-                tracks[1].append([int(strings[0]), int(strings[1])])
-            elif line == "---\n":
-                bool1=True
+            if not outerReady:
+                if line == "---\n":
+                    outerReady = True
+                else:
+                    strings=line.split(",")
+                    tracks[i].outer.append([int(strings[0]), int(strings[1])])
+            elif not innerReady:
+                if line == "---\n":
+                    innerReady = True
+                else:
+                    strings = line.split(",")
+                    tracks[i].inner.append([int(strings[0]), int(strings[1])])
+            elif not startReady:
+                if line == "---\n":
+                    startReady = True
+                else:
+                    strings = line.split(",")
+                    tracks[i].startPos = [int(strings[0]), int(strings[1])]
             else:
                 strings = line.split(",")
-                tracks[0].append([int(strings[0]), int(strings[1])])
+                tracks[i].startDir = float(strings[0])
+
         f.close()
-    return tracks[0], tracks[1]
+    return tracks[x]

@@ -1,4 +1,5 @@
 import kirajzolas
+import physics
 import math
 import numpy as np
 
@@ -28,10 +29,8 @@ def solvelineqsys(o, v, p1, p2):
         nvx, nvy = normalize(v)
         nmvx, nmvy = normalize(mv)
 
-        bool1 = abs(nvx - nmvx) < 0.000001 and abs(nvy - nmvy) < 0.000001
-        bool2 = (min(p1[0], p2[0]) <= mxy[0] <= max(p1[0], p2[0])) and (min(p1[1], p2[1]) <= mxy[1] <= max(p1[1], p2[1]))
-
-        if bool1 and bool2:
+        if abs(nvx - nmvx) < 0.000001 and abs(nvy - nmvy) < 0.000001 and (
+            min(p1[0], p2[0]) <= mxy[0] <= max(p1[0], p2[0])) and (min(p1[1], p2[1]) <= mxy[1] <= max(p1[1], p2[1])):
             val[0] = mxy[0]
             val[1] = mxy[1]
     else:
@@ -59,6 +58,8 @@ def calcdist(o, v):
     valmin = (10000, 10000)
     for i in m1:
         if math.dist(o, i) < math.dist(o, valmin):
-            valmin = i
-
-    return math.dist(valmin, o)
+             valmin = i
+    dist = math.dist(valmin, o)
+    if dist <= physics.track:
+        physics.collision = True
+    return dist

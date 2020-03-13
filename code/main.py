@@ -1,15 +1,27 @@
 import physics
 import kirajzolas
 import perception
+import pygame
 
-x=300.0
-y=300.0
-dir=0.3
-kirajzolas.palya_1k, kirajzolas.palya_1b = kirajzolas.getTracks()
-print(kirajzolas.palya_1k)
-print(kirajzolas.palya_1b)
+t = kirajzolas.getTracks(1)
+x = t.startPos[0]
+y = t.startPos[1]
+Dir = t.startDir
+kirajzolas.palya_1k=t.outer
+kirajzolas.palya_1b=t.inner
+
+
+def manual_steering():
+    turn = 0.0
+    pressed = pygame.key.get_pressed()
+    if pressed[pygame.K_LEFT]:
+        turn = 0.3
+    if pressed[pygame.K_RIGHT]:
+        turn = -0.3
+    return turn
+
 while True:
-    (x,y,dir)=physics.move(x,y,dir,0.3,0.3)
-    perception.calcDistances(x,y,dir)
-    kirajzolas.drawPalya(x,y,dir)
+    (x, y, Dir) = physics.move(x, y, Dir, 0.5, manual_steering())
+    perception.calcDistances(x, y, Dir)
+    kirajzolas.drawPalya(x, y, Dir)
 
