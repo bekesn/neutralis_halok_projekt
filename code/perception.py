@@ -55,11 +55,11 @@ def calcdist(o, v):
         else:
             m1.append(solvelineqsys(o, v, kirajzolas.palya_1k[i], kirajzolas.palya_1k[0]))
 
-    valmin = (10000, 10000)
+    mindistance=10000
     for i in m1:
-        if math.dist(o, i) < math.dist(o, valmin):
-             valmin = i
-    dist = math.dist(valmin, o)
-    if dist <= physics.track:
+        d=math.sqrt((i[0] - o[0]) * (i[0] - o[0]) + (i[1] - o[1]) * (i[1] - o[1]))
+        if d<mindistance:
+            mindistance=d
+    if mindistance <= physics.track:
         physics.collision = True
-    return dist
+    return mindistance

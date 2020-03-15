@@ -1,10 +1,9 @@
 import physics
-import physics
 import kirajzolas
 import perception
 import pygame
 
-t = kirajzolas.getTracks(2)
+t = kirajzolas.getTracks(1)
 x = t.startPos[0]
 y = t.startPos[1]
 Dir = t.startDir
