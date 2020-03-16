@@ -1,37 +1,51 @@
-import physics
 import kirajzolas
-import perception
-import pygame
+import numpy as np
+import gym
+from kisauto_env import Kisauto
 
-t = kirajzolas.getTracks(1)
-x = t.startPos[0]
-y = t.startPos[1]
-Dir = t.startDir
-speed = 0.0     # A sebesség változtatásához
-skid = 0.0  # A csúszáshoz
-skid_factor = 5     # Megadja, mennyivel változzon a csúszás értéke
-kirajzolas.palya_1k=t.outer
-kirajzolas.palya_1b=t.inner
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Flatten
+from keras.optimizers import Adam
+
+from rl.agents.cem import CEMAgent
+from rl.memory import EpisodeParameterMemory
+
+kirajzolas.getTracks() # betöltjük listába txt-ből a pályákat
+
+# Get the environment and extract the number of actions.
+env = Kisauto()
+
+np.random.seed(123)
+env.seed(123)
+
+nb_actions = env.action_space.shape
+print(nb_actions)
+obs_dim = env.observation_space.shape[0]
+
+# Option 1 : Simple model
+model = Sequential()
+model.add(Flatten(input_shape=(1,) + env.observation_space.shape))
+model.add(Dense(1))
+model.add(Activation('softmax'))
+
+print(model.summary())
 
 
-def manual_steering():
-    turn = 0.0
-    dspeed = 0.0
-    pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_LEFT]:
-        turn = 0.4
-    if pressed[pygame.K_RIGHT]:
-        turn = -0.4
-    if pressed[pygame.K_UP]:
-        dspeed = 0.01   # Sebesség növelése
-    if pressed[pygame.K_DOWN]:
-        dspeed = -0.01  # Sebesség csökkentése
-    return turn, dspeed
+# Finally, we configure and compile our agent. You can use every built-in Keras optimizer and
+# even the metrics!
+memory = EpisodeParameterMemory(limit=1000, window_length=1)
 
-while True:
-    speed = speed + manual_steering()[1]    # Tényleges sebesség kiszámítása
-    (x, y, Dir, skid) = physics.move(x, y, Dir, speed, manual_steering()[0], skid)
-    skid = skid + speed * skid_factor   # Csúszás értékének meghatározása a sebesség függvényében
-    perception.calcDistances(x, y, Dir)
-    kirajzolas.drawPalya(x, y, Dir)
+cem = CEMAgent(model=model, nb_actions=nb_actions, memory=memory,
+               batch_size=50, nb_steps_warmup=2000, train_interval=50, elite_frac=0.05)
+cem.compile()
 
+# Okay, now it's time to learn something! We visualize the training here for show, but this
+# slows down training quite a lot. You can always safely abort the training prematurely using
+# Ctrl + C.
+cem.fit(env, nb_steps=100000, visualize=True, verbose=2)
+
+# After training is done, we save the best weights.
+cem.save_weights('cem_{}_params.h5f'.format('kisauto'), overwrite=True)
+
+# Finally, evaluate our algorithm for 5 episodes.
+cem.test(env, nb_episodes=5, visualize=True)

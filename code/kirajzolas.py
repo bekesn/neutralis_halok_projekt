@@ -17,12 +17,11 @@ blue = (0,0,255)
 
 # variables
 tracks = [[] for i in range(2)]
-palya_1b=[]
-palya_1k=[]
 
 pygame.init()
 Display = pygame.display.set_mode((900,900))
 Display.fill(black)
+currentTrackIndex=0
 
 def drawPalya(x,y,Dir):
     Display.fill(black)
@@ -30,8 +29,8 @@ def drawPalya(x,y,Dir):
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
-    pygame.draw.polygon(Display, red, palya_1b, 3)
-    pygame.draw.polygon(Display, red, palya_1k, 3)
+    pygame.draw.polygon(Display, red, tracks[currentTrackIndex].inner, 3)
+    pygame.draw.polygon(Display, red, tracks[currentTrackIndex].outer, 3)
     drawSearchLine(x,y,Dir)
     pygame.draw.polygon(Display, green, (
         (int(x + a * math.cos(Dir) - b * math.sin(Dir)), int(y - a * math.sin(Dir) - b * math.cos(Dir))),
@@ -57,6 +56,7 @@ class Track():
 
 def getTracks(x = 0):
     filenames = os.listdir(os.getcwd() + "\\pontok")
+    global tracks
     tracks=[]
     for file in filenames:
         tracks.append(Track())
@@ -91,3 +91,11 @@ def getTracks(x = 0):
 
         f.close()
     return tracks[x]
+
+def nextTrackIndex():       #lépteti a pályát, biztonságosan
+    global currentTrackIndex
+    if currentTrackIndex == len(tracks)-1:
+        currentTrackIndex = 0
+    else:
+        currentTrackIndex = currentTrackIndex + 1
+    return currentTrackIndex

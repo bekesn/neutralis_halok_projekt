@@ -3,10 +3,16 @@ import physics
 import math
 import numpy as np
 
-def calcDistances(x,y,dir):
-    angles=kirajzolas.SearchLineAngles
+
+def calcDistances(x, y, dir):       #autó helyzetének 3 paramétere, pálya indexe
+    angles = kirajzolas.SearchLineAngles
+    inputData = [0 for i in range(len(angles))]
+    belso = kirajzolas.tracks[kirajzolas.currentTrackIndex].inner
+    kulso = kirajzolas.tracks[kirajzolas.currentTrackIndex].outer
     for i in range(len(angles)):
-        kirajzolas.SearchLineDistances[i]=calcdist((x,y),(math.sin(dir+angles[i]),math.cos(dir+angles[i])))
+        inputData[i] = calcdist((x, y), (math.sin(dir+angles[i]), math.cos(dir+angles[i])), belso, kulso)
+    kirajzolas.SearchLineDistances=inputData
+    return inputData
 
 def normalize(a):
     return a[0] / math.sqrt(a[0] * a[0] + a[1] * a[1]), a[1] / math.sqrt(a[0] * a[0] + a[1] * a[1])
@@ -38,22 +44,22 @@ def solvelineqsys(o, v, p1, p2):
     return val
 
 
-def calcdist(o, v):
+def calcdist(o, v, belso, kulso):
     m1 = []
     # Calculate distance between car and inner side of the track
-    for i in range(len(kirajzolas.palya_1b)):
-        if i != len(kirajzolas.palya_1b) - 1:
-            m1.append(solvelineqsys(o, v, kirajzolas.palya_1b[i], kirajzolas.palya_1b[i + 1]))
+    for i in range(len(belso)):
+        if i != len(belso) - 1:
+            m1.append(solvelineqsys(o, v, belso[i], belso[i + 1]))
 
         else:
-            m1.append(solvelineqsys(o, v, kirajzolas.palya_1b[i], kirajzolas.palya_1b[0]))
+            m1.append(solvelineqsys(o, v, belso[i], belso[0]))
 
-    for i in range(len(kirajzolas.palya_1k)):
-        if i != len(kirajzolas.palya_1k) - 1:
-            m1.append(solvelineqsys(o, v, kirajzolas.palya_1k[i], kirajzolas.palya_1k[i + 1]))
+    for i in range(len(kulso)):
+        if i != len(kulso) - 1:
+            m1.append(solvelineqsys(o, v, kulso[i], kulso[i + 1]))
 
         else:
-            m1.append(solvelineqsys(o, v, kirajzolas.palya_1k[i], kirajzolas.palya_1k[0]))
+            m1.append(solvelineqsys(o, v, kulso[i], kulso[0]))
 
     mindistance=10000
     for i in m1:
