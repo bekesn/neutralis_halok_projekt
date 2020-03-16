@@ -18,14 +18,14 @@ env = Kisauto()
 np.random.seed(123)
 env.seed(123)
 
-nb_actions = env.action_space.shape
+nb_actions = env.action_space.shape[0]
 print(nb_actions)
 obs_dim = env.observation_space.shape[0]
 
 # Option 1 : Simple model
 model = Sequential()
 model.add(Flatten(input_shape=(1,) + env.observation_space.shape))
-model.add(Dense(1))
+model.add(Dense(nb_actions))
 model.add(Activation('softmax'))
 
 print(model.summary())
@@ -42,7 +42,7 @@ cem.compile()
 # Okay, now it's time to learn something! We visualize the training here for show, but this
 # slows down training quite a lot. You can always safely abort the training prematurely using
 # Ctrl + C.
-cem.fit(env, nb_steps=100000, visualize=True, verbose=2)
+cem.fit(env, nb_steps=10000, visualize=False, verbose=2)
 
 # After training is done, we save the best weights.
 cem.save_weights('cem_{}_params.h5f'.format('kisauto'), overwrite=True)

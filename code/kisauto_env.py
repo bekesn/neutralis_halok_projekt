@@ -15,10 +15,10 @@ class Kisauto(gym.Env):
 		self.info = {'a': 0, 'b': 0} #TODO kókány
 		self.i = 0
 		self.observation_space = spaces.Box(low=np.zeros(len(kirajzolas.SearchLineAngles)),
-											high=np.ones(len(kirajzolas.SearchLineAngles))*1000)
+											high=np.ones(len(kirajzolas.SearchLineAngles))*1000, dtype=np.float32)
 		self.init_space = spaces.Box(low=np.zeros(len(kirajzolas.SearchLineAngles)),
-											high=np.ones(len(kirajzolas.SearchLineAngles)) * 1000)
-		self.action_space = spaces.Box(low=np.array([-0.5]), high=np.array([0.5]))
+											high=np.ones(len(kirajzolas.SearchLineAngles)) * 1000, dtype=np.float32)
+		self.action_space = spaces.Box(low=np.array([0,-0.5]), high=np.array([1,0.5]), dtype=np.float32)
 
 	def step(self, command):  # ez fut a modellben minden lépésben
 		self.pos = physics.move(self.pos[0], self.pos[1], self.pos[2], 0.01, command)
