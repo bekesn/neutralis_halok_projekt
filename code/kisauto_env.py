@@ -18,13 +18,13 @@ class Kisauto(gym.Env):
 											high=np.ones(len(kirajzolas.SearchLineAngles))*1000, dtype=np.float32)
 		self.init_space = spaces.Box(low=np.zeros(len(kirajzolas.SearchLineAngles)),
 											high=np.ones(len(kirajzolas.SearchLineAngles)) * 1000, dtype=np.float32)
-		self.action_space = spaces.Box(low=np.array([0,-0.5]), high=np.array([1,0.5]), dtype=np.float32)
+		self.action_space = spaces.Box(low=np.array([-0.01,-0.4]), high=np.array([0.01,0.4]), dtype=np.float32)
 
 	def step(self, command):  # ez fut a modellben minden lépésben
-		self.pos = physics.move(self.pos[0], self.pos[1], self.pos[2], 0.01, command)
+		self.pos = physics.move(self.pos[0], self.pos[1], self.pos[2], command[0], command[1])
 		#print(command)
 		obs = np.array(perception.calcDistances(self.pos[0], self.pos[1], self.pos[2]))
-		self.reward = self.reward+0.0001 #TODO: ezt jól megírni, most lépésekkel nő
+		self.reward = self.reward+physics.speed+command[0] #TODO: ezt jól megírni, most lépésekkel nő
 		return [obs, self.reward, physics.collision, self.info] # a háló bemenete, jutalom, vége van-e (ütközés), random info
 
 	def reset(self):  # ha vége a szimulációnak, ez állít alaphelyzetbe ismét
