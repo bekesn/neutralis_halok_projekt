@@ -3,7 +3,7 @@ import math
 # constants describing physics
 wheelBase = 20
 track = 10
-slipEnabled = True
+slipEnabled = False
 slipLimit = 0.004
 turnLimit = 0.3   # math.pi/4
 g = 9.81
@@ -12,6 +12,7 @@ px = 5  # px/s to m/s
 pr = 10  # m to px
 rand=10
 skid_factor=5 # Megadja, mennyivel változzon a csúszás értéke
+max_accelerating=0.05
 
 # status
 slip = False

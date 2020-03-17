@@ -3,7 +3,7 @@ import pygame
 import math
 
 pygame.init()
-Display = pygame.display.set_mode((900,900))
+Display = pygame.display.set_mode((900,650))
 Display.fill((0,0,0))
 
 outerReady=False
@@ -66,13 +66,16 @@ while go:
                 elif buttons[0] and not ready:
                     pos = pygame.mouse.get_pos()
                     pos = [pos[0]-start[0], pos[1]-start[1]]
-                    #l=math.sqrt(float(startDir[0]*startDir[0]+startDir[1]*startDir[1]))
-                    #startDir=(startDir[0]/l, startDir[1]/l)
-                    startDir=math.atan(float(pos[0])/float(pos[1]))
-                    if pos[0] < 0:
-                        startDir = startDir+math.pi
-                    ready = True
-                    pygame.display.set_caption("Mentesre kesz")
+                    if pos[1]==0:
+                        pass
+                    else:
+                        startDir=-math.pi/2
+                        startDir=math.atan(float(pos[0])/float(pos[1]))
+                        if pos[1] < 0:
+                            startDir= startDir+math.pi
+                        print(startDir)
+                        ready = True
+                        pygame.display.set_caption("Mentesre kesz")
                 elif buttons[1] and ready:
                     now = datetime.now()
                     f=open("pontok/pontok_"+now.strftime("%m%d_%H%M%S")+".txt","x")

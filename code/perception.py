@@ -19,7 +19,8 @@ def normalize(a):
 
 
 def solvelineqsys(o, v, p1, p2):
-    val = [10000, 10000]
+    #val = [10000, 10000]
+    min_dist=2000
     pv = (p2[0] - p1[0], p2[1] - p1[1])
     pv = normalize(pv)
 
@@ -35,13 +36,17 @@ def solvelineqsys(o, v, p1, p2):
         nvx, nvy = normalize(v)
         nmvx, nmvy = normalize(mv)
 
-        if abs(nvx - nmvx) < 0.000001 and abs(nvy - nmvy) < 0.000001 and (
-            min(p1[0], p2[0]) <= mxy[0] <= max(p1[0], p2[0])) and (min(p1[1], p2[1]) <= mxy[1] <= max(p1[1], p2[1])):
-            val[0] = mxy[0]
-            val[1] = mxy[1]
+        # and abs(nvy - nmvy) < 0.000001 - ez nem kell, elég x-re tesztelni
+        if (min(p1[0], p2[0]) <= mxy[0] <= max(p1[0], p2[0])) and (min(p1[1], p2[1]) <= mxy[1] <= max(p1[1], p2[1])):
+            if abs(nvx - nmvx) < 0.000001:
+                #val[0] = mxy[0]
+                #val[1] = mxy[1]
+                min_dist = math.sqrt((mxy[0] - o[0]) * (mxy[0] - o[0]) + (mxy[1] - o[1]) * (mxy[1] - o[1]))
+            else:
+                min_dist = -math.sqrt((mxy[0] - o[0]) * (mxy[0] - o[0]) + (mxy[1] - o[1]) * (mxy[1] - o[1]))
     else:
         pass
-    return val
+    return min_dist
 
 
 def calcdist(o, v, belso, kulso):
@@ -61,11 +66,16 @@ def calcdist(o, v, belso, kulso):
         else:
             m1.append(solvelineqsys(o, v, kulso[i], kulso[0]))
 
-    mindistance=10000
+    mindistance=2000
     for i in m1:
-        d=math.sqrt((i[0] - o[0]) * (i[0] - o[0]) + (i[1] - o[1]) * (i[1] - o[1]))
-        if d<mindistance:
-            mindistance=d
-    if mindistance <= physics.track:
+        #d=math.sqrt((i[0] - o[0]) * (i[0] - o[0]) + (i[1] - o[1]) * (i[1] - o[1]))
+        if i<mindistance:
+            if 0<i:
+                mindistance=i
+                if mindistance <= physics.track:
+                    physics.collision = True
+            #elif i>=physics.track:
+                #physics.collision = True
+    if mindistance <= physics.track or mindistance>1000:
         physics.collision = True
     return mindistance

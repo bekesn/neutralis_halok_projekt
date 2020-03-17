@@ -6,9 +6,8 @@ import pygame
 
 a = 10
 b = 20
-SearchLineAngles = [-math.pi/2,-math.pi*3/8,-math.pi/4,-math.pi*1/8,0.0,math.pi/8,math.pi/4,
-                  math.pi*3/8,math.pi/2]
-SearchLineDistances = [10,10,10,20,30,10,30,20,40]
+SearchLineAngles = []
+
 white = (255,255,255)
 black = (0,0,0)
 red = (255,0,0)
@@ -17,11 +16,13 @@ blue = (0,0,255)
 
 # variables
 tracks = [[] for i in range(2)]
+SearchLineDistances = []
+currentTrackIndex=0
 
 pygame.init()
-Display = pygame.display.set_mode((900,900))
+Display = pygame.display.set_mode((900,650))
 Display.fill(black)
-currentTrackIndex=0
+
 
 def drawPalya(x,y,Dir):
     Display.fill(black)
@@ -92,6 +93,7 @@ def getTracks(x = 0):
         f.close()
     return tracks[x]
 
+
 def nextTrackIndex():       #lépteti a pályát, biztonságosan
     global currentTrackIndex
     if currentTrackIndex == len(tracks)-1:
@@ -99,3 +101,12 @@ def nextTrackIndex():       #lépteti a pályát, biztonságosan
     else:
         currentTrackIndex = currentTrackIndex + 1
     return currentTrackIndex
+
+
+def init_searchlines(n, angle1=-math.pi/2, angle2=math.pi/2): # n vonal, szögtartomány: angle1-től angle2-ig
+    global SearchLineAngles
+    global SearchLineDistances
+    SearchLineDistances = [0 for i in range(n)]
+    SearchLineAngles = [0 for i in range(n)]
+    for i in range(n):
+        SearchLineAngles[i] = angle1+(angle2-angle1)*float(i)/float(n-1)

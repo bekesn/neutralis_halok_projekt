@@ -1,4 +1,5 @@
 import gym
+import math
 from gym import error, spaces, utils
 from gym.utils import seeding
 import perception
@@ -19,15 +20,24 @@ class Kisauto(gym.Env):
 		self.init_space = spaces.Box(low=np.zeros(len(kirajzolas.SearchLineAngles)),
 											high=np.ones(len(kirajzolas.SearchLineAngles)) * 1000, dtype=np.float32)
 		self.action_space = spaces.Box(low=np.array([-0.01,-0.4]), high=np.array([0.01,0.4]), dtype=np.float32)
+		self.steps = 0
+		self.distTraveled = 0
 
 	def step(self, command):  # ez fut a modellben minden lépésben
+		self.steps += 1
+		self.distTraveled += physics.speed+command[0]
 		self.pos = physics.move(self.pos[0], self.pos[1], self.pos[2], command[0], command[1])
 		#print(command)
 		obs = np.array(perception.calcDistances(self.pos[0], self.pos[1], self.pos[2]))
-		self.reward = self.reward+physics.speed+command[0] #TODO: ezt jól megírni, most lépésekkel nő
+		#TODO: ezt jól megírni:
+		self.reward += physics.speed*np.amin(obs)/math.sqrt(float(self.steps))/10000000  # messze vagyunk a szélétől, nagy átlagsebesség
+		#self.reward -= 0.01 - physics.speed #+ max(abs(command[0]) - physics.max_accelerating, 0)/100  # jó tempó, gyorsulásunk nem nagy
+		#math.sqrt(float(self.steps))
 		return [obs, self.reward, physics.collision, self.info] # a háló bemenete, jutalom, vége van-e (ütközés), random info
 
 	def reset(self):  # ha vége a szimulációnak, ez állít alaphelyzetbe ismét
+		self.steps = 0
+		self.distTraveled = 0
 		self.i = kirajzolas.nextTrackIndex()
 		self.pos = (kirajzolas.tracks[self.i].startPos[0], kirajzolas.tracks[self.i].startPos[1],
 				kirajzolas.tracks[self.i].startDir)
