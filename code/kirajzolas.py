@@ -40,6 +40,7 @@ def drawPalya(x,y,Dir):
         (int(x - a * math.cos(Dir) - b * math.sin(Dir)), int(y + a * math.sin(Dir) - b * math.cos(Dir)))))
     pygame.display.update()
 
+
 def drawSearchLine(x,y,dir):
     for i in range(len(SearchLineAngles)):
         pygame.draw.line(Display,blue,(x,y),
@@ -48,12 +49,14 @@ def drawSearchLine(x,y,dir):
         '''pygame.draw.circle(Display,white,(int(x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i]),
                                          int(y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i])),4)'''
 
+
 class Track():
     def __init__(self):
         self.inner=[]
         self.outer=[]
         self.startPos = [100,100]
         self.startDir = 0.5
+
 
 def getTracks(x = 0):
     filenames = os.listdir(os.getcwd() + "\\pontok")
