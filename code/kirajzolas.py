@@ -65,7 +65,7 @@ def getTracks(x = 0):
     for file in filenames:
         tracks.append(Track())
 
-    for i in range(len(filenames)):
+    for i in range(len(tracks)):
         outerReady=False
         innerReady = False
         startReady = False
