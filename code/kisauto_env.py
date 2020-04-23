@@ -28,11 +28,9 @@ class Kisauto(gym.Env):
 		self.distTraveled += speed
 		self.pos = physics.move(self.pos[0], self.pos[1], self.pos[2], 0.5*command[0], 0.4*command[1])
 		obs = np.append(perception.calcDistances(self.pos[0], self.pos[1], self.pos[2]), [speed])
-		#TODO: ezt jól megírni:
-		#self.reward += np.amin(obs)*np.amin(obs)*self.distTraveled/math.sqrt(float(self.steps))/10000000  # nagy átlagsebesség
-		#reward = self.distTraveled/(1+(speed-1)*(speed-1))
-		reward = min(1 - math.exp(-self.distTraveled/100), max(1-math.exp(-speed),0))
-		#reward = self.distTraveled*(1-max(20-np.amin(obs[0:len(obs)-2]), 0)/20)
+
+		#TODO: ezt jól megírni, bár most jónak tűnik
+		reward = 1 - math.exp(-speed/100)
 		return [np.copy(obs), reward, physics.collision, self.info] # a háló bemenete, jutalom, vége van-e (ütközés), random info
 
 	def reset(self):  # ha vége a szimulációnak, ez állít alaphelyzetbe ismét

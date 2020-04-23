@@ -69,13 +69,8 @@ def calcdist(o, v, belso, kulso):
     mindistance=2000
     for i in m1:
         #d=math.sqrt((i[0] - o[0]) * (i[0] - o[0]) + (i[1] - o[1]) * (i[1] - o[1]))
-        if i<mindistance:
-            if 0<i:
-                mindistance=i
-                if mindistance <= physics.track:
-                    physics.collision = True
-            #elif i>=physics.track:
-                #physics.collision = True
+        if 0<i<mindistance:
+           mindistance=i
     if mindistance <= physics.track or mindistance>1000:
         physics.collision = True
     return mindistance
