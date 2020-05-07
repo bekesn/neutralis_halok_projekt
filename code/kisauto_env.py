@@ -14,10 +14,10 @@ class Kisauto(gym.Env):
 		self.reward = 0.0
 		self.info = {}
 		self.i = 0
-		self.observation_space = spaces.Box(low=np.zeros(len(kirajzolas.SearchLineAngles)+1),
-											high=np.ones(len(kirajzolas.SearchLineAngles)+1)*1000, dtype=np.float32)
-		self.init_space = spaces.Box(low=np.zeros(len(kirajzolas.SearchLineAngles)+1),
-											high=np.ones(len(kirajzolas.SearchLineAngles)+1) * 1000, dtype=np.float32)
+		self.observation_space = spaces.Box(low=np.ones(len(kirajzolas.SearchLineAngles)+1)*(-2),
+											high=np.ones(len(kirajzolas.SearchLineAngles)+1)*2, dtype=np.float32)
+		self.init_space = spaces.Box(low=np.ones(len(kirajzolas.SearchLineAngles)+1)*(-2),
+											high=np.ones(len(kirajzolas.SearchLineAngles)+1) * 2, dtype=np.float32)
 		self.action_space = spaces.Box(low=np.array([-1.0,-1.0]), high=np.array([1.0,1.0]), dtype=np.float32)
 		self.steps = 0
 		self.distTraveled = 0
@@ -27,7 +27,7 @@ class Kisauto(gym.Env):
 		speed = physics.speed+0.1*command[0]
 		self.distTraveled += speed
 		self.pos = physics.move(self.pos[0], self.pos[1], self.pos[2], 0.5*command[0], 0.4*command[1])
-		obs = np.append(perception.calcDistances(self.pos[0], self.pos[1], self.pos[2]), [speed])
+		obs = np.append(normalize(perception.calcDistances(self.pos[0], self.pos[1], self.pos[2])), [speed])
 
 		#TODO: ezt jól megírni, bár most jónak tűnik
 		reward = 1 - math.exp(-speed/100)
@@ -47,3 +47,8 @@ class Kisauto(gym.Env):
 
 	def render(self, mode='human', close=False):  # kirajzolás
 		kirajzolas.drawPalya(self.pos[0], self.pos[1], self.pos[2])
+
+
+def normalize(array):
+	centered=array-np.average(array)
+	return centered/np.std(centered)
