@@ -3,6 +3,7 @@ import physics
 import perception
 import pygame
 
+kirajzolas.init_searchlines(9)
 kirajzolas.getTracks()
 x = kirajzolas.tracks[kirajzolas.currentTrackIndex].startPos[0]
 y = kirajzolas.tracks[kirajzolas.currentTrackIndex].startPos[1]
@@ -32,6 +33,7 @@ while True:
         y = kirajzolas.tracks[i].startPos[1]
         Dir = kirajzolas.tracks[i].startDir
     (x, y, Dir, skid) = physics.move(x, y, Dir, manual_steering()[1], manual_steering()[0])
+    perception.calcDistances(x,y,Dir)
     perception.calcDistances(x, y, Dir)
-    kirajzolas.drawPalya(x, y, Dir, kirajzolas.currentTrackIndex)
+    kirajzolas.drawPalya(x, y, Dir)
 

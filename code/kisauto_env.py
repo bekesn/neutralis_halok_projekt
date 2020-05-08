@@ -42,7 +42,7 @@ class Kisauto(gym.Env):
 		physics.reset()
 		self.info = {}
 		self.reward = 0.0
-		obs = np.append(perception.calcDistances(self.pos[0], self.pos[1], self.pos[2]),[physics.speed])
+		obs = np.append(normalize(perception.calcDistances(self.pos[0], self.pos[1], self.pos[2])),[physics.speed])
 		return obs
 
 	def render(self, mode='human', close=False):  # kirajzolás
