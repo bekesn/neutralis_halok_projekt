@@ -78,7 +78,7 @@ while go:
                         pygame.display.set_caption("Mentesre kesz")
                 elif buttons[1] and ready:
                     now = datetime.now()
-                    f=open("pontok/pontok_"+now.strftime("%m%d_%H%M%S")+".txt","x")
+                    f=open("train/pontok_"+now.strftime("%m%d_%H%M%S")+".txt","x")
                     for i in list1:
                         f.write(str(i[0])+","+str(i[1])+",\n")
                     f.write("---\n")
@@ -91,10 +91,10 @@ while go:
                     f.close()
                     pygame.quit()
                     go=False
-            if len(list1) > 1:  pygame.draw.polygon(Display, (255, 0, 0), list1, 3)
-            if len(list2) > 1:  pygame.draw.polygon(Display, (255, 0, 0), list2, 3)
-            if ready: pygame.draw.line(Display, (0, 128, 255), start,
+            if go:
+                if len(list1) > 1:  pygame.draw.polygon(Display, (255, 0, 0), list1, 3)
+                if len(list2) > 1:  pygame.draw.polygon(Display, (255, 0, 0), list2, 3)
+                if ready: pygame.draw.line(Display, (0, 128, 255), start,
                                        (start[0]+20*math.sin(startDir), start[1]+20*math.cos(startDir)), 3)
-            if startReady: pygame.draw.circle(Display, (0, 0, 255), start, 3)
-
-            pygame.display.update()
+                if startReady: pygame.draw.circle(Display, (0, 0, 255), start, 3)
+                pygame.display.update()

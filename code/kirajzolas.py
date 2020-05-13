@@ -1,6 +1,7 @@
 import math
 import os
 import pygame
+import physics
 
 #constants
 
@@ -29,7 +30,8 @@ def drawPalya(x,y,Dir):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            quit()
+            quit(1)
+    drawStatus()
     pygame.draw.polygon(Display, red, tracks[currentTrackIndex].inner, 3)
     pygame.draw.polygon(Display, red, tracks[currentTrackIndex].outer, 3)
     drawSearchLine(x,y,Dir)
@@ -48,6 +50,18 @@ def drawSearchLine(x,y,dir):
                   y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i]))
         '''pygame.draw.circle(Display,white,(int(x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i]),
                                          int(y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i])),4)'''
+def drawStatus():
+    size=40
+    if physics.speed>0:
+        vel=round(physics.speed / physics.speedlimit * size)
+        Display.fill([200, 200, 0], (0, 0, size, size-vel))
+        Display.fill([0,200,200], (0, size-vel, size, vel))
+    else:
+        Display.fill([255, 0, 0], (0, 0, size, size))
+    turn = round((physics.turn/physics.turnLimit+1)/2*size)
+    Display.fill([0, 0, 255], (size, 0, size-turn, size))
+    Display.fill([0, 255, 0], (2*size-turn, 0, turn, size))
+    Display.fill([255*physics.slip, 0, 0], (2*size, 0, size, size))
 
 
 class Track():
@@ -58,8 +72,14 @@ class Track():
         self.startDir = 0.5
 
 
-def getTracks(x = 0):
-    filenames = os.listdir(os.getcwd() + "\\pontok")
+def getTracks(x = 0, type="train"):
+    if type=="train":
+        filenames = os.listdir(os.getcwd() + "\\train")
+    elif type=="test":
+        filenames = os.listdir(os.getcwd() + "\\test")
+    else:
+        print("Wrong track type. Allowed: train/test")
+        quit(2);
     global tracks
     tracks=[]
     for file in filenames:
@@ -69,7 +89,7 @@ def getTracks(x = 0):
         outerReady=False
         innerReady = False
         startReady = False
-        f=open(os.getcwd()+"\\pontok\\"+filenames[i],"r")
+        f=open(os.getcwd()+"\\"+type+"\\"+filenames[i],"r")
         for line in f:
             if not outerReady:
                 if line == "---\n":
