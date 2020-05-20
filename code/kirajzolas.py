@@ -2,6 +2,7 @@ import math
 import os
 import pygame
 import physics
+import perception
 
 #constants
 
@@ -34,7 +35,7 @@ def drawPalya(x,y,Dir):
     drawStatus()
     pygame.draw.polygon(Display, red, tracks[currentTrackIndex].inner, 3)
     pygame.draw.polygon(Display, red, tracks[currentTrackIndex].outer, 3)
-    drawSearchLine(x,y,Dir)
+    #drawSearchLine(x,y,Dir)
     pygame.draw.polygon(Display, green, (
         (int(x + a * math.cos(Dir) - b * math.sin(Dir)), int(y - a * math.sin(Dir) - b * math.cos(Dir))),
         (int(x + a * math.cos(Dir) + b * math.sin(Dir)), int(y - a * math.sin(Dir) + b * math.cos(Dir))),
@@ -50,15 +51,21 @@ def drawSearchLine(x,y,dir):
                   y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i]))
         '''pygame.draw.circle(Display,white,(int(x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i]),
                                          int(y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i])),4)'''
+    #[p1, p2]=perception.centerized(x,y)
+    #print(p1)
+    #pygame.draw.circle(Display,white,(int(p1[0]),int(p1[1])),4)
+    #pygame.draw.circle(Display, white, (int(p2[0]), int(p2[1])), 4)
+
+
 def drawStatus():
     size=40
     if physics.speed>0:
-        vel=round(physics.speed / physics.speedlimit * size)
+        vel=int((physics.throttle/2+0.5)*size)#round(physics.speed / physics.speedlimit * size)
         Display.fill([200, 200, 0], (0, 0, size, size-vel))
         Display.fill([0,200,200], (0, size-vel, size, vel))
     else:
         Display.fill([255, 0, 0], (0, 0, size, size))
-    turn = round((physics.turn/physics.turnLimit+1)/2*size)
+    turn = int((physics.turn/physics.turnLimit+1)/2*size)
     Display.fill([0, 0, 255], (size, 0, size-turn, size))
     Display.fill([0, 255, 0], (2*size-turn, 0, turn, size))
     Display.fill([255*physics.slip, 0, 0], (2*size, 0, size, size))
@@ -119,7 +126,7 @@ def getTracks(x = 0, type="train"):
 
 def nextTrackIndex():       #lépteti a pályát, biztonságosan
     global currentTrackIndex
-    if currentTrackIndex == len(tracks)-1:
+    if currentTrackIndex >= len(tracks)-1:
         currentTrackIndex = 0
     else:
         currentTrackIndex = currentTrackIndex + 1
