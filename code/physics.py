@@ -2,15 +2,15 @@ import math
 # constants describing physics
 wheelBase = 20
 track = 10
-slipEnabled = False  # False / True
+slipEnabled = True  # False / True
 slipLimit = 0.004
 turnLimit = 0.3   # math.pi/4
 g = 9.81
-mu = 1  # Tapadási súrlódási tényező
+mu = 1.5  # Tapadási súrlódási tényező
 px = 5  # px/s to m/s
 pr = 10  # m to px
 rand=10
-skid_factor=5 # Megadja, mennyivel változzon a csúszás értéke
+skid_factor=4 # Megadja, mennyivel változzon a csúszás értéke
 max_accelerating=0.05
 speedlimit = 4
 
@@ -21,6 +21,8 @@ skid=0.0
 speed=0.0
 performance=1
 turn=0.0
+throttle=0.0
+
 
 def reset():
     global slip
@@ -28,24 +30,29 @@ def reset():
     global skid
     global speed
     global turn
+    global  throttle
     slip = 0
     collision=False
     skid=0.0
     speed=0.0
     turn=0.0
+    throttle=0.0
+
 
 def move(x, y, dir, speedChange, dirChange):
     global skid # így lehet elérni őket függvényben
     global slip
     global speed
     global turn
-    if -speedlimit < speed < speedlimit:
+    global throttle
+    throttle=speedChange
+    if -speedlimit < speed + speedChange < speedlimit:
         speed = speed + speedChange  # jelenlegi sebesség
     elif speed < -speedlimit:
         speed = -speedlimit
     else:
         speed = speedlimit
-
+    slip = 0
     if dirChange == 0:
         x = x + math.sin(dir) * speed
         y = y + math.cos(dir) * speed
@@ -75,7 +82,6 @@ def move(x, y, dir, speedChange, dirChange):
             dir = dir + speed / rad
             x = origo[0] - math.cos(dir) * rad
             y = origo[1] + math.sin(dir) * rad
-            slip=0
     skid = skid + abs(speed) * skid_factor  # Csúszás értékének meghatározása a sebesség függvényében
     turn = dirChange
     return (x, y, dir, collision)

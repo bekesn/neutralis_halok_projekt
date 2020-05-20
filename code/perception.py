@@ -19,7 +19,6 @@ def normalize(a):
 
 
 def solvelineqsys(o, v, p1, p2):
-    #val = [10000, 10000]
     min_dist=2000
     pv = (p2[0] - p1[0], p2[1] - p1[1])
     pv = normalize(pv)
@@ -74,3 +73,40 @@ def calcdist(o, v, belso, kulso):
     if mindistance <= physics.track or mindistance>1000:
         physics.collision = True
     return mindistance
+
+def centerized(x,y):
+    belso = kirajzolas.tracks[kirajzolas.currentTrackIndex].inner
+    kulso = kirajzolas.tracks[kirajzolas.currentTrackIndex].outer
+    pclosest1=closestPoint(x,y,belso[len(belso)-1], belso[0])
+    mindist1=(pclosest1[0]-x)*(pclosest1[0]-x)+(pclosest1[1]-y)*(pclosest1[1]-y)
+    for i in range(len(belso)-1):
+        p = closestPoint(x, y, belso[i], belso[i+1])
+        dist = (p[0] - x) * (p[0] - x) + (p[1] - y) * (p[1] - y)
+        if dist<mindist1:
+            mindist1=dist
+            pclosest1=p
+    pclosest2 = closestPoint(x, y, kulso[len(kulso)-1], kulso[0])
+    mindist2 = (pclosest2[0] - x) * (pclosest2[0] - x) + (pclosest2[1] - y) * (pclosest2[1] - y)
+    for i in range(len(kulso) - 1):
+        p = closestPoint(x, y, kulso[i], kulso[i+1])
+        dist = (p[0] - x) * (p[0] - x) + (p[1] - y) * (p[1] - y)
+        if dist < mindist2:
+            mindist2 = dist
+            pclosest2 = p
+    innerdist=(x - pclosest1[0])*(x - pclosest1[0])+(y - pclosest1[1])*(y - pclosest1[1])
+    outerdist = (x - pclosest2[0]) * (x - pclosest2[0]) + (y - pclosest2[1])*(y - pclosest2[1])
+    centerized=1-abs((innerdist-outerdist)/(innerdist+outerdist))
+    return centerized
+
+def closestPoint(x, y, p1,p2):
+    dirvec=[p2[0]-p1[0], p2[1]-p1[1]]
+    delta=math.sqrt(dirvec[1]*dirvec[1]+dirvec[0]*dirvec[0])
+    dirvec = [dirvec[0]/delta, dirvec[1]/delta]
+    from_start=[x-p1[0], y-p1[1]]
+    l=dirvec[0]*from_start[0]+dirvec[1]*from_start[1]
+    if l>=delta:
+        return p2
+    elif l<=0:
+        return p1
+    else:
+        return [p1[0]+l*dirvec[0], p1[1]+l*dirvec[1]]
