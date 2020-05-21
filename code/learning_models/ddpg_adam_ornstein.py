@@ -28,7 +28,7 @@ def training(env):
     # Finally, evaluate our algorithm for 5 episodes.
 
 def testing(env, name):
-    kirajzolas.getTracks(type="test")
+    kirajzolas.getTracks(type="train")
     model = load_model("models\\ddpg_keras_"+name+'.h5')
     print(model.summary())
 
@@ -55,13 +55,13 @@ def create_agent(env):
 
     model = Sequential()
     model.add(Flatten(input_shape=(1,) + env.observation_space.shape))
-    #model.add(Dense(50, activity_regularizer=regularizers.l2(0.08)))
-    #model.add(Activation('linear'))
-    model.add(Dense(100,activity_regularizer=regularizers.l2(0.08)))
-    model.add(Activation('tanh'))
-    model.add(Dense(100,activity_regularizer=regularizers.l2(0.08)))
+    #model.add(Dense(200, activity_regularizer=regularizers.l2(0.02)))
+    #model.add(Activation('relu'))
+    model.add(Dense(200,activity_regularizer=regularizers.l2(0.1)))
     model.add(Activation('relu'))
-    model.add(Dense(nb_actions,activity_regularizer=regularizers.l2(0.05)))
+    model.add(Dense(200,activity_regularizer=regularizers.l2(0.1)))
+    model.add(Activation('sigmoid'))
+    model.add(Dense(nb_actions,activity_regularizer=regularizers.l2(0.1)))
     model.add(Activation('tanh'))
     print(model.summary())
 
@@ -78,7 +78,7 @@ def create_agent(env):
     critic = Model(inputs=[action_input, observation_input], outputs=x)
     print(critic.summary())
     memory = SequentialMemory(limit=100000, window_length=1)
-    random_process = OrnsteinUhlenbeckProcess(size=nb_actions, theta=.15, mu=0., sigma=.6 ,sigma_min=0.1 ,n_steps_annealing=12000)
+    random_process = OrnsteinUhlenbeckProcess(size=nb_actions, theta=.15, mu=0., sigma=.6 ,sigma_min=0.1 ,n_steps_annealing=24000)
     agent = DDPGAgent(nb_actions=nb_actions, actor=model, critic=critic, critic_action_input=action_input,
                       memory=memory, nb_steps_warmup_critic=100, nb_steps_warmup_actor=4000,
                       random_process=random_process, gamma=.99, target_model_update=9e-4)

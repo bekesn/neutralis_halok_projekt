@@ -35,4 +35,5 @@ while True:
     (x, y, Dir, skid) = physics.move(x, y, Dir, manual_steering()[1], manual_steering()[0])
     perception.calcDistances(x, y, Dir)
     kirajzolas.drawPalya(x, y, Dir)
+    print(perception.centerized(x,y))
 

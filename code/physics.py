@@ -22,7 +22,7 @@ speed=0.0
 performance=1
 turn=0.0
 throttle=0.0
-
+direction=0.0
 
 def reset():
     global slip
@@ -45,6 +45,8 @@ def move(x, y, dir, speedChange, dirChange):
     global speed
     global turn
     global throttle
+    global direction
+    direction=dir
     throttle=speedChange
     if -speedlimit < speed + speedChange < speedlimit:
         speed = speed + speedChange  # jelenlegi sebesség
