@@ -25,12 +25,14 @@ class Kisauto(gym.Env):
 	def step(self, command):  # ez fut a modellben minden lépésben
 		self.steps += 1
 		self.state = physics.move(self.state[0], self.state[1], self.state[2], 0.5 * command[0], 0.4 * command[1])
-		speed = physics.speed+0.1*command[0]
+		speed = physics.speed
 		self.distTraveled += speed
 		obs = np.append(normalize(perception.calcDistances(self.state[0], self.state[1], self.state[2])), [speed])
 
+		centerized = perception.centerized(self.state[0], self.state[1])
 		#TODO: ezt jól megírni, bár most jónak tűnik
-		self.reward= (1 - math.exp(-speed/100))*(1-physics.slip)*(1-physics.slip)#*(1-physics.slip)
+		self.reward= max(-2,1-math.exp(4-speed*10))*(1-math.exp((self.centered-centerized)*40-1))
+		self.centered=centerized
 		return [np.copy(obs), self.reward, self.state[3], self.info] # a háló bemenete, jutalom, vége van-e (ütközés), random info
 
 	def reset(self):  # ha vége a szimulációnak, ez állít alaphelyzetbe ismét
@@ -40,6 +42,7 @@ class Kisauto(gym.Env):
 		self.state = (kirajzolas.tracks[self.i].startPos[0], kirajzolas.tracks[self.i].startPos[1],
 				kirajzolas.tracks[self.i].startDir, 0)
 		physics.reset()
+		self.centered = perception.centerized(self.state[0], self.state[1])
 		self.info = {}
 		self.reward = 0.0
 		obs = np.append(normalize(perception.calcDistances(self.state[0], self.state[1], self.state[2])),[physics.speed])

@@ -18,7 +18,7 @@ def training(env):
     # Okay, now it's time to learn something! We visualize the training here for show, but this
     # slows down training quite a lot. You can always safely abort the training prematurely using
     # Ctrl + C.
-    agent.fit(env, nb_steps=20000, nb_max_start_steps=4, action_repetition=1, nb_max_episode_steps=500, visualize=True, verbose=2)
+    agent.fit(env, nb_steps=30000, nb_max_start_steps=4, action_repetition=1, nb_max_episode_steps=500, visualize=True, verbose=2)
 
     # After training is done, we save the best weights.
     time = datetime.now().strftime("%m%d_%H%M%S")
@@ -55,11 +55,13 @@ def create_agent(env):
 
     model = Sequential()
     model.add(Flatten(input_shape=(1,) + env.observation_space.shape))
-    model.add(Dense(160,activity_regularizer=regularizers.l2(0.08)))
-    model.add(Activation('linear'))
-    model.add(Dense(160,activity_regularizer=regularizers.l2(0.08)))
+    #model.add(Dense(50, activity_regularizer=regularizers.l2(0.08)))
+    #model.add(Activation('linear'))
+    model.add(Dense(100,activity_regularizer=regularizers.l2(0.08)))
     model.add(Activation('tanh'))
-    model.add(Dense(nb_actions,activity_regularizer=regularizers.l2(0.08)))
+    model.add(Dense(100,activity_regularizer=regularizers.l2(0.08)))
+    model.add(Activation('relu'))
+    model.add(Dense(nb_actions,activity_regularizer=regularizers.l2(0.05)))
     model.add(Activation('tanh'))
     print(model.summary())
 
@@ -76,10 +78,10 @@ def create_agent(env):
     critic = Model(inputs=[action_input, observation_input], outputs=x)
     print(critic.summary())
     memory = SequentialMemory(limit=100000, window_length=1)
-    random_process = OrnsteinUhlenbeckProcess(size=nb_actions, theta=.15, mu=0., sigma=.6 ,sigma_min=0.15,n_steps_annealing=12000)
+    random_process = OrnsteinUhlenbeckProcess(size=nb_actions, theta=.15, mu=0., sigma=.6 ,sigma_min=0.1 ,n_steps_annealing=12000)
     agent = DDPGAgent(nb_actions=nb_actions, actor=model, critic=critic, critic_action_input=action_input,
                       memory=memory, nb_steps_warmup_critic=100, nb_steps_warmup_actor=4000,
                       random_process=random_process, gamma=.99, target_model_update=9e-4)
-    agent.compile(Adam(lr=.001, clipnorm=1.), metrics=['mae'])  # ezek a paraméterek nem kellenek
+    agent.compile(Adam(lr=.0005, clipnorm=1.), metrics=['mae'])  # ezek a paraméterek nem kellenek
 
     return agent
