@@ -1,15 +1,9 @@
-import kirajzolas
-import physics
+import map
+from matchbox_env import Matchbox
 import perception
 import pygame
 
-kirajzolas.init_searchlines(9)
-kirajzolas.getTracks()
-x = kirajzolas.tracks[kirajzolas.currentTrackIndex].startPos[0]
-y = kirajzolas.tracks[kirajzolas.currentTrackIndex].startPos[1]
-Dir = kirajzolas.tracks[kirajzolas.currentTrackIndex].startDir
-
-
+# checking keyboard input
 def manual_steering():
     turn = 0.0
     dspeed = 0.0
@@ -19,21 +13,24 @@ def manual_steering():
     if pressed[pygame.K_RIGHT]:
         turn = -0.4
     if pressed[pygame.K_UP]:
-        dspeed = 0.01   # Sebesség növelése
+        dspeed = 0.01
     if pressed[pygame.K_DOWN]:
-        dspeed = -0.01  # Sebesség csökkentése
-    return turn, dspeed
+        dspeed = -0.01
+    return dspeed,turn
 
+# init tracks and car
+map.getTracks()
+env=Matchbox(9)
+env.reset()
 
 while True:
-    if physics.collision:       #ilyenkor újraindulunk egy másik pályán
-        physics.reset()
-        i = kirajzolas.nextTrackIndex()
-        x = kirajzolas.tracks[i].startPos[0]
-        y = kirajzolas.tracks[i].startPos[1]
-        Dir = kirajzolas.tracks[i].startDir
-    (x, y, Dir, skid) = physics.move(x, y, Dir, manual_steering()[1], manual_steering()[0])
-    perception.calcDistances(x, y, Dir)
-    kirajzolas.drawPalya(x, y, Dir)
-    print(perception.centerized(x,y))
+    if env.collision:
+        env.reset()         # restarting on a different track
+    control=manual_steering()
+    env.move(control[0],control[1])
+    perception.calcDistances(env)
+    #perception.performance(env)
+    env.render()
+
+
 
