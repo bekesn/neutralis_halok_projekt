@@ -12,7 +12,7 @@ startReady=False
 ready= False
 list1=[]
 list2=[]
-pygame.display.set_caption("Külsö iv","b")
+pygame.display.set_caption("Outer arc","b")
 go = True
 while go:
     for event in pygame.event.get():
@@ -32,11 +32,11 @@ while go:
                     print(x,y)
                 elif buttons[1]:
                     outerReady=True
-                    pygame.display.set_caption("Belsö iv")
+                    pygame.display.set_caption("Inner arc")
             elif not innerReady:
                 if buttons[2]:
                     if len(list2)==0:
-                        pygame.display.set_caption("Külsö iv")
+                        pygame.display.set_caption("Outer arc")
                         outerReady=False
                     else:
                         list2.pop(len(list2) - 1)
@@ -49,17 +49,17 @@ while go:
                     innerReady = True
             elif not startReady:
                 if buttons[2]:
-                    pygame.display.set_caption("Külsö iv")
+                    pygame.display.set_caption("Inner arc")
                     innerReady = False
                 elif buttons[0]:
                     start = pygame.mouse.get_pos()
                     startReady = True
-                    pygame.display.set_caption("Kezdo irany")
+                    pygame.display.set_caption("Start direction")
             else:
                 if buttons[2]:
                     if ready:
                         ready = False
-                        pygame.display.set_caption("Kezdo irany")
+                        pygame.display.set_caption("Start direction")
                     else:
                         pygame.display.set_caption("Start")
                         startReady = False
@@ -75,10 +75,12 @@ while go:
                             startDir= startDir+math.pi
                         print(startDir)
                         ready = True
-                        pygame.display.set_caption("Mentesre kesz")
+                        pygame.display.set_caption("Ready to save")
                 elif buttons[1] and ready:
                     now = datetime.now()
-                    f=open("train/pontok_"+now.strftime("%m%d_%H%M%S")+".txt","x")
+                    # Choose between the train and test folders
+                    #f = open("train/tracks_" + now.strftime("%m%d_%H%M%S") + ".txt", "x")
+                    f = open("test/tracks_" + now.strftime("%m%d_%H%M%S") + ".txt", "x")
                     for i in list1:
                         f.write(str(i[0])+","+str(i[1])+",\n")
                     f.write("---\n")
