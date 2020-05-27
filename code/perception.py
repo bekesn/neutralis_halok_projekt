@@ -97,16 +97,13 @@ def performance(env):
         if dist < mindist2:
             mindist2 = dist
             pclosest2 = p
-    #innerdist=(x - pclosest1[0])*(x - pclosest1[0])+(y - pclosest1[1])*(y - pclosest1[1])
-    #outerdist = (x - pclosest2[0]) * (x - pclosest2[0]) + (y - pclosest2[1])*(y - pclosest2[1])
-    #centerized=1-abs((innerdist-outerdist)/(innerdist+outerdist))
     d = np.linalg.norm(pclosest1-pclosest2)
     return 1-abs(np.dot([math.sin(env.direction), math.cos(env.direction)], pclosest2-pclosest1)/d)
 
 
 # closest point of line segment to the car
-def closestPoint(pos, p1,p2):
-    dirvec = np.array(p2-p1,dtype=np.float32)
+def closestPoint(pos, p1, p2):
+    dirvec = np.array(p2-p1, dtype=np.float32)
     delta = np.linalg.norm(dirvec)
     dirvec = dirvec/delta
     from_start = pos-p1

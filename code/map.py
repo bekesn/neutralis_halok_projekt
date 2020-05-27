@@ -52,18 +52,14 @@ def drawSearchLine(x,y,dir,SearchLineAngles,SearchLineDistances):
         pygame.draw.line(Display,blue,(x,y),
                  (x+math.sin(dir+SearchLineAngles[i])*SearchLineDistances[i],
                   y+math.cos(dir+SearchLineAngles[i])*SearchLineDistances[i]))
-    #[p1, p2]=perception.performance(env)
-    #pygame.draw.circle(Display,white,(int(p1[0]),int(p1[1])),4)
-    #pygame.draw.circle(Display, white, (int(p2[0]), int(p2[1])), 4)
 
 
 # feedback on throttle, turn angle, and slip in the left upper corner
 def drawStatus(env):
     size=40
-    if env.speed>0:
-        vel=int((env.throttle/2+0.5)*size)
-        Display.fill([200, 200, 0], (0, 0, size, size-vel))
-        Display.fill([0,200,200], (0, size-vel, size, vel))
+    vel=int((env.throttle/2+0.5)*size)
+    Display.fill([200, 200, 0], (0, 0, size, size-vel))
+    Display.fill([0,200,200], (0, size-vel, size, vel))
     turn = int((env.turn/env.turnLimit+1)/2*size)
     Display.fill([0, 0, 255], (size, 0, size-turn, size))
     Display.fill([0, 255, 0], (2*size-turn, 0, turn, size))

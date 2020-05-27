@@ -18,6 +18,7 @@ def training(env):
 
     nb_actions = env.action_space.shape[0]
 
+    # building the actor model
     model = Sequential()
     model.add(Flatten(input_shape=(1,) + env.observation_space.shape))
     model.add(Dense(200, activity_regularizer=regularizers.l2(0.1)))
@@ -28,6 +29,7 @@ def training(env):
     model.add(Activation('tanh'))
     print(model.summary())
 
+    # building the critic model
     action_input = Input(shape=(nb_actions,), name='action_input')
     observation_input = Input(shape=(1,) + env.observation_space.shape, name='observation_input')
     flattened_observation = Flatten()(observation_input)
@@ -40,6 +42,8 @@ def training(env):
     x = Activation('tanh')(x)
     critic = Model(inputs=[action_input, observation_input], outputs=x)
     print(critic.summary())
+
+    # set up DDPG agent
     memory = SequentialMemory(limit=100000, window_length=1)
     random_process = OrnsteinUhlenbeckProcess(size=nb_actions, theta=.15, mu=0., sigma=.6, sigma_min=0.1,
                                               n_steps_annealing=24000)
@@ -48,18 +52,18 @@ def training(env):
                       random_process=random_process, gamma=.99, target_model_update=9e-4)
     agent.compile(Adam(lr=.0005, clipnorm=1.), metrics=['mae'])
 
-    # Okay, now it's time to learn something! We visualize the training here for show, but this
-    # slows down training quite a lot. You can always safely abort the training prematurely using
-    # Ctrl + C.
+    # training the DDPG agent
     agent.fit(env, nb_steps=30000, nb_max_start_steps=4, action_repetition=1, nb_max_episode_steps=500, visualize=True, verbose=2)
 
-    # After training is done, we save the best weights.
+    # After training is done, we save the best models.
     time = datetime.now().strftime("%m%d_%H%M%S")
     agent.actor.save('models\\ddpg_keras_'+time+'.h5')
+
+    # We test the model on test tracks
     testing(env, time)
-    # Finally, evaluate our algorithm for 12 episodes.
 
 def testing(env, name):
+    # loading test tracks and models
     map.getTracks(type="test")
     model = load_model("models\\ddpg_keras_"+name+'.h5')
     print(model.summary())

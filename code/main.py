@@ -42,16 +42,16 @@ ddpg_keras.testing(env, 'k9_best_nn')
 #######################################################################################################################
 # Models with the slip effect
 # Please, set the "env.slipEnabled" to "True"
-#env.slipEnabled = True
+env.slipEnabled = True
 
-# First model handling the slip effect
+# First model handling the slip effect, simple
 #ddpg_keras.testing(env, 'wslip_k9_m1')
 
 # Second model handling the slip effect
 #ddpg_keras.testing(env, 'wslip_k9_m2')
 
 # Third model handling the slip effect
-#ddpg_keras.testing(env, 'wslip_k9_m3')
+#ddpg_keras.testing(env, 'wslip_k15_m3')
 
 #######################################################################################################################
 # Training the DDPG algorithm

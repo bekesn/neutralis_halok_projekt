@@ -106,7 +106,7 @@ class Matchbox(gym.Env):
 		if self.turn == 0:
 			self.x += math.sin(self.direction) * self.speed
 			self.y += math.cos(self.direction) * self.speed
-			self.skid = 0.0  # Ebben az esetben nem csúszik az autó
+			self.skid = 0.0
 		else:
 			rad = self.wheelBase / math.tan(self.turn)
 			rad = math.sqrt(rad * rad + self.wheelBase * self.wheelBase / 4) * self.turn / abs(self.turn)
@@ -114,27 +114,26 @@ class Matchbox(gym.Env):
 			v_max = math.sqrt(self.g * self.mu * abs(rad / self.pr))
 			rad_min = self.speed * self.speed * self.px * self.px * self.pr / (self.g * self.mu)
 			if self.slipEnabled and self.speed * self.px > v_max:
-				if abs(rad) + self.skid < rad_min:  # Addig növeljük a csúszás értékét, amíg a megfelelő körpályára kerül
+				if abs(rad) + self.skid < rad_min:
 					mrad = rad / (abs(rad) + self.skid)
 				else:
 					mrad = rad / rad_min
 					self.skid = rad_min - abs(
-						rad) + 10  # Amint a megfelelő körpályán vagyunk, nem változik az értéke. 10 := biztonsági tényező
-				# print(v_max, rad, rad_min, skid, mrad)
+						rad) + 10
 				self.x += math.sin(self.direction) * self.speed
 				self.y += math.cos(self.direction) * self.speed
-				self.direction = self.direction + self.speed / rad * abs(mrad)  # Ezzel a képlettel adjuk meg a csúszás mértékét
+				self.direction = self.direction + self.speed / rad * abs(mrad)
 				self.slip = 1 - abs(mrad)
 			else:
-				self.skid = 0.0  # Ebben az esetben nem csúszik az autó
+				self.skid = 0.0
 				self.direction = self.direction + self.speed / rad
 				self.x = origo[0] - math.cos(self.direction) * rad
 				self.y = origo[1] + math.sin(self.direction) * rad
-		self.skid = self.skid + abs(self.speed) * self.skid_factor  # Csúszás értékének meghatározása a sebesség függvényében
+		self.skid = self.skid + abs(self.speed) * self.skid_factor
 		self.distTraveled += self.speed
 
 	# defining the directions to measure distances
-	def init_searchlines(self, n, angle1=-math.pi / 2, angle2=math.pi / 2):  # n vonal, szögtartomány: angle1-től angle2-ig
+	def init_searchlines(self, n, angle1=-math.pi / 2, angle2=math.pi / 2):
 		self.SearchLineDistances = [0 for i in range(n)]
 		self.SearchLineAngles = [0 for i in range(n)]
 		for i in range(n):
