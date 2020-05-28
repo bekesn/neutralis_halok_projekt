@@ -1,6 +1,7 @@
 import map
 from matchbox_env import Matchbox
 from learning_models import ddpg_keras,ddpg_stable
+import manualSteer
 
 
 # The maps will be loaded as .txt files from the test or train folders
@@ -60,8 +61,26 @@ env.slipEnabled = True
 #ddpg_keras.training(env)
 
 #######################################################################################################################
+# Training the DDPG algorithm
+# Its parameters can be set in the "ddpg_keras.py" file, in the "training()" function
+
+#ddpg_keras.training(env)
+
+#######################################################################################################################
 # Training & testing models using DDPG Stable Baseline algorithm
+# Please, note that you need another package: from mpi4py import MPI
 
 #ddpg_stable.training(env)
 
 #ddpg_stable.testing(env, 'test')
+
+#######################################################################################################################
+# User driven version
+# Forward: Up key
+# Backward: Down key
+# Turn left: Left key
+# Turn right: Right key
+# It runs endlessly if not aborted by user.
+# Drive our car manually by uncommenting the following code!
+
+#manualSteer.manual_steering()
