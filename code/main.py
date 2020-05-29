@@ -1,7 +1,6 @@
 import map
 from matchbox_env import Matchbox
 from learning_models import ddpg_keras,ddpg_stable
-import manualSteer
 
 
 # The maps will be loaded as .txt files from the test or train folders
@@ -26,7 +25,7 @@ env = Matchbox(9)
 env.slipEnabled = False
 
 # This trained network achieved the best results both in training and testing
-ddpg_keras.testing(env, 'k9_best_nn')
+#ddpg_keras.testing(env, 'k9_best_nn')
 
 # This model was the first example in the presentation
 #ddpg_keras.testing(env, 'k5_l3_n200_300_200')
@@ -49,7 +48,7 @@ env.slipEnabled = True
 #ddpg_keras.testing(env, 'wslip_k9_m1')
 
 # Second model handling the slip effect
-#ddpg_keras.testing(env, 'wslip_k9_m2')
+ddpg_keras.testing(env, 'wslip_k9_m2')
 
 # Third model handling the slip effect
 #ddpg_keras.testing(env, 'wslip_k15_m3')
@@ -83,4 +82,5 @@ env.slipEnabled = True
 # It runs endlessly if not aborted by user.
 # Drive our car manually by uncommenting the following code!
 
+#import manualSteer
 #manualSteer.manual_steering()
