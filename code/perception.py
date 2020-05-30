@@ -76,7 +76,7 @@ def solvelineqsys(o, v, p1, p2):
     return min_dist
 
 
-# calculate how parallel the car stands with the track
+# calculate how parallel the car stands with the track and how centered it is
 def performance(env):
     pos = np.array([env.x, env.y])
     belso = map.tracks[map.currentTrackIndex].inner
@@ -98,7 +98,11 @@ def performance(env):
             mindist2 = dist
             pclosest2 = p
     d = np.linalg.norm(pclosest1-pclosest2)
-    return 1-abs(np.dot([math.sin(env.direction), math.cos(env.direction)], pclosest2-pclosest1)/d)
+    parallel=1-abs(np.dot([math.sin(env.direction), math.cos(env.direction)], pclosest2-pclosest1)/d)
+    a=np.linalg.norm(pclosest1 - pos)
+    b=np.linalg.norm(pclosest2 - pos)
+    centered=1-abs(a-b)/(a+b)
+    return centered*parallel
 
 
 # closest point of line segment to the car

@@ -25,7 +25,7 @@ env = Matchbox(9)
 env.slipEnabled = False
 
 # This trained network achieved the best results both in training and testing
-#ddpg_keras.testing(env, 'k9_best_nn')
+ddpg_keras.testing(env, 'k9_best_nn')
 
 # This model was the first example in the presentation
 #ddpg_keras.testing(env, 'k5_l3_n200_300_200')
@@ -48,7 +48,7 @@ env.slipEnabled = True
 #ddpg_keras.testing(env, 'wslip_k9_m1')
 
 # Second model handling the slip effect
-ddpg_keras.testing(env, 'wslip_k9_m2')
+#ddpg_keras.testing(env, 'wslip_k9_m2')
 
 # Third model handling the slip effect
 #ddpg_keras.testing(env, 'wslip_k15_m3')
@@ -82,5 +82,4 @@ ddpg_keras.testing(env, 'wslip_k9_m2')
 # It runs endlessly if not aborted by user.
 # Drive our car manually by uncommenting the following code!
 
-#import manualSteer
-#manualSteer.manual_steering()
+import manualSteer
